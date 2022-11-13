@@ -1,4 +1,4 @@
-# GitHub Research Runner
+# GitHub Research Runner (ghrr)
 A utility to collect data from github stars, subscribers and contributors of a selected project
 
 ## installing
