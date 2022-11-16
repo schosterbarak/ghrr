@@ -11,7 +11,7 @@ python setup.py install
 
 ```
 
-## using
+## Using
 1. Create github personal access token using the following guide:
 https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
 
@@ -25,15 +25,19 @@ ghrr --org bridgecrewio --repo checkov
 
 ```
 
-## result
+## Result
 will be created at the following format under the working directory:
 `ghusers_{ORG}_{REPO}_{DATE}.csv`
 
 example:
 `ghusers_bridgecrewio_checkov_2020-09-21.csv`
-```
-| username   | company  | organizations   | email   | location   | followers_count   | public_repos_count   | user_iteraction   |
-| --------   | -------  | -------------   | ------- | --------   | ---------------   | ------------------   | ---------------   |
-| Jon.       | ACME.    | ACME.           | jon@acme.com   | US   | 3   | 200   | stargazer   |
+`
+| username   | company  | organizations   | email           | location    | followers_count   | public_repos_count   | user_iteraction   |
+| --------   | -------  | -------------   | -------         | --------    | ---------------   | ------------------   | ---------------   |
+| Jon.       | ACME.    | ACME.           | jon@acme.com    | US          | 3                 | 200                  | stargazer   |
+| Jane       | ACME.    | ACME.          | jane@acme.com    | IL          | 3                 | 200                  | collaborator   |
 
-```
+`
+
+When loading to a BI tool:
+
