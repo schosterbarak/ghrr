@@ -40,4 +40,5 @@ example:
 `
 
 When loading to a BI tool:
+![GitHub Influencers Dashboard](/influencers%20dashboard.png "GitHub Influencers Dashboard").
 
