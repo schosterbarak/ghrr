@@ -1,5 +1,7 @@
 # GitHub Research Runner (ghrr)
-A utility to collect data from github stargazers, subscribers and contributors of a selected project
+A utility to collect data from github stargazers, subscribers and contributors of a selected project.
+
+Usecases are detailed at the following blog: https://www.battery.com/blog/fantastic-developer-community-heroes-and-where-to-find-them/
 
 ## installing
 
