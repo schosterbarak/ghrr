@@ -13,6 +13,7 @@
 
 mod auth;
 mod cli;
+mod csv_output;
 mod errors;
 mod models;
 mod progress;
