@@ -15,6 +15,7 @@ mod auth;
 mod cli;
 mod csv_output;
 mod errors;
+mod github_client;
 mod models;
 mod progress;
 

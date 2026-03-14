@@ -147,20 +147,35 @@ mod tests {
     // race conditions between tests. In Rust 2024 edition, env::set_var() and
     // env::remove_var() are unsafe because they modify shared process state.
 
+    /// Mutex protecting environment variable access in auth tests.
+    ///
+    /// `env::set_var` and `env::remove_var` are inherently process-global and
+    /// non-thread-safe. When multiple tests modify them concurrently, they can
+    /// observe each other's changes. This mutex serializes all auth tests that
+    /// touch `GITHUB_USER` / `GITHUB_TOKEN` so they are safe to run under the
+    /// default parallel test harness without `--test-threads=1`.
+    static ENV_MUTEX: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
     /// Helper: saves the current values of GITHUB_USER and GITHUB_TOKEN,
     /// runs the provided closure, then restores the original values.
     /// This prevents tests from leaking state into each other.
+    ///
+    /// All access is serialized by [`ENV_MUTEX`] to avoid data races when
+    /// the test harness runs tests in parallel.
     fn with_env_vars<F, R>(user: Option<&str>, token: Option<&str>, f: F) -> R
     where
         F: FnOnce() -> R,
     {
+        // Acquire the mutex to serialize env var access across test threads
+        let _lock = ENV_MUTEX.lock().unwrap_or_else(|e| e.into_inner());
+
         // Save original values
         let orig_user = env::var("GITHUB_USER").ok();
         let orig_token = env::var("GITHUB_TOKEN").ok();
 
         // Set test values
-        // SAFETY: These calls modify shared process state (environment variables).
-        // Tests must be run single-threaded (--test-threads=1) to avoid data races.
+        // SAFETY: Access is serialized by ENV_MUTEX. No other test thread
+        // will read or write these env vars while we hold the lock.
         unsafe {
             match user {
                 Some(val) => env::set_var("GITHUB_USER", val),
