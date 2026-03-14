@@ -11,6 +11,7 @@
 //! 5. Create CSV output writer
 //! 6. Iterate stargazers → subscribers → contributors sequentially
 
+mod auth;
 mod cli;
 mod errors;
 mod models;
