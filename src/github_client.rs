@@ -203,9 +203,15 @@ impl GithubClient {
     /// Returns an error if the repository cannot be resolved or any user listing
     /// endpoint fails. The caller should handle rate limit errors and retry.
     pub async fn resolve_repository(&self, org: &str, repo: &str) -> Result<RepoData> {
-        // Fetch repository metadata for stargazers_count and subscribers_count
+        // Fetch repository metadata for stargazers_count and subscribers_count.
+        // Rate limit errors (403 Forbidden) are classified as GhrrError::RateLimit
+        // so the caller's retry loop in main.rs can detect them and invoke wait_rate_limit().
         let repository = self.client.repos(org, repo).get().await.map_err(|e| {
-            GhrrError::Repository(format!("Failed to resolve {}/{}: {}", org, repo, e))
+            if is_rate_limit_error(&e) {
+                GhrrError::RateLimit(e.to_string())
+            } else {
+                GhrrError::Repository(format!("Failed to resolve {}/{}: {}", org, repo, e))
+            }
         })?;
 
         let stargazers_count = repository.stargazers_count.unwrap_or(0) as u64;
@@ -250,12 +256,12 @@ impl GithubClient {
             .client
             .get(&route, Some(&params))
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to list stargazers: {}", e)))?;
+            .map_err(classify_error)?;
         let all_users = self
             .client
             .all_pages(first_page)
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to paginate stargazers: {}", e)))?;
+            .map_err(classify_error)?;
         Ok(all_users)
     }
 
@@ -280,12 +286,12 @@ impl GithubClient {
             .client
             .get(&route, Some(&params))
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to list subscribers: {}", e)))?;
+            .map_err(classify_error)?;
         let all_users = self
             .client
             .all_pages(first_page)
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to paginate subscribers: {}", e)))?;
+            .map_err(classify_error)?;
         Ok(all_users)
     }
 
@@ -310,12 +316,12 @@ impl GithubClient {
             .client
             .get(&route, Some(&params))
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to list contributors: {}", e)))?;
+            .map_err(classify_error)?;
         let all_users = self
             .client
             .all_pages(first_page)
             .await
-            .map_err(|e| GhrrError::Api(format!("Failed to paginate contributors: {}", e)))?;
+            .map_err(classify_error)?;
         Ok(all_users)
     }
 
@@ -359,14 +365,14 @@ impl GithubClient {
         let username = &simple_user.login;
 
         // Fetch full user profile (Python line 31: gh_user = gh.user(username))
+        // Rate limit errors (403 Forbidden) are classified as GhrrError::RateLimit
+        // so the caller (iterate_users in main.rs) can detect them and invoke wait_rate_limit().
         let profile = self
             .client
             .users(username)
             .profile()
             .await
-            .map_err(|e| {
-                GhrrError::Api(format!("Failed to get profile for {}: {}", username, e))
-            })?;
+            .map_err(classify_error)?;
 
         // Fetch user's organization memberships (Python lines 37-40)
         // Uses GET /users/{username}/orgs with pagination
