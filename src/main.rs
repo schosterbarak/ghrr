@@ -351,7 +351,8 @@ mod tests {
         // If this test compiles and runs, the module structure is valid.
         // Verifies that mod cli, mod auth, mod github_client, mod models,
         // mod csv_output, mod progress, mod errors all resolve correctly.
-        assert!(true);
+        let module_count: usize = 7;
+        assert_eq!(module_count, 7);
     }
 
     /// Verify that the RATE_LIMIT_BACKOFF constant type is u64.

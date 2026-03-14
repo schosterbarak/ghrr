@@ -794,7 +794,7 @@ mod tests {
     #[test]
     fn test_organizations_join_matches_python() {
         // Python: ', '.join(organizations) equivalent
-        let orgs = vec![
+        let orgs = [
             "github".to_string(),
             "rust-lang".to_string(),
             "servo".to_string(),
@@ -805,7 +805,7 @@ mod tests {
 
     #[test]
     fn test_organizations_join_single() {
-        let orgs = vec!["only-org".to_string()];
+        let orgs = ["only-org".to_string()];
         let joined = orgs.join(", ");
         assert_eq!(joined, "only-org");
     }
