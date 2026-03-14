@@ -40,7 +40,7 @@ mod tests {
     /// and that optional file arg defaults to None.
     #[test]
     fn test_parse_required_args() {
-        let args = Args::parse_from(&["ghrr", "-o", "myorg", "-r", "myrepo"]);
+        let args = Args::parse_from(["ghrr", "-o", "myorg", "-r", "myrepo"]);
         assert_eq!(args.organization, "myorg");
         assert_eq!(args.repository, "myrepo");
         assert!(args.file.is_none());
@@ -49,7 +49,7 @@ mod tests {
     /// Verify that the -f flag with a file path is parsed correctly.
     #[test]
     fn test_parse_with_file() {
-        let args = Args::parse_from(&[
+        let args = Args::parse_from([
             "ghrr", "-o", "myorg", "-r", "myrepo", "-f", "output.csv",
         ]);
         assert_eq!(args.organization, "myorg");
@@ -62,7 +62,7 @@ mod tests {
     /// `-f -`, CSV output goes to stdout and progress bars are suppressed.
     #[test]
     fn test_parse_with_stdout() {
-        let args = Args::parse_from(&["ghrr", "-o", "myorg", "-r", "myrepo", "-f", "-"]);
+        let args = Args::parse_from(["ghrr", "-o", "myorg", "-r", "myrepo", "-f", "-"]);
         assert_eq!(args.organization, "myorg");
         assert_eq!(args.repository, "myrepo");
         assert_eq!(args.file, Some("-".to_string()));
@@ -71,7 +71,7 @@ mod tests {
     /// Verify that long-form argument names work correctly.
     #[test]
     fn test_parse_long_args() {
-        let args = Args::parse_from(&[
+        let args = Args::parse_from([
             "ghrr",
             "--organization",
             "myorg",
@@ -88,28 +88,28 @@ mod tests {
     /// Verify that missing the required -o/--organization flag causes a parse error.
     #[test]
     fn test_missing_required_org() {
-        let result = Args::try_parse_from(&["ghrr", "-r", "myrepo"]);
+        let result = Args::try_parse_from(["ghrr", "-r", "myrepo"]);
         assert!(result.is_err());
     }
 
     /// Verify that missing the required -r/--repository flag causes a parse error.
     #[test]
     fn test_missing_required_repo() {
-        let result = Args::try_parse_from(&["ghrr", "-o", "myorg"]);
+        let result = Args::try_parse_from(["ghrr", "-o", "myorg"]);
         assert!(result.is_err());
     }
 
     /// Verify that providing no arguments at all causes a parse error.
     #[test]
     fn test_missing_all_required_args() {
-        let result = Args::try_parse_from(&["ghrr"]);
+        let result = Args::try_parse_from(["ghrr"]);
         assert!(result.is_err());
     }
 
     /// Verify that mixed short and long flags work together.
     #[test]
     fn test_mixed_short_and_long_flags() {
-        let args = Args::parse_from(&[
+        let args = Args::parse_from([
             "ghrr",
             "-o",
             "myorg",
@@ -126,7 +126,7 @@ mod tests {
     /// Verify that argument values with special characters are handled.
     #[test]
     fn test_args_with_special_characters() {
-        let args = Args::parse_from(&[
+        let args = Args::parse_from([
             "ghrr",
             "-o",
             "my-org_123",
@@ -144,7 +144,7 @@ mod tests {
     /// an error of kind DisplayVersion, which indicates the version was requested).
     #[test]
     fn test_version_flag() {
-        let result = Args::try_parse_from(&["ghrr", "--version"]);
+        let result = Args::try_parse_from(["ghrr", "--version"]);
         assert!(result.is_err());
         // clap returns an error with kind DisplayVersion for --version
         let err = result.unwrap_err();
@@ -154,7 +154,7 @@ mod tests {
     /// Verify that the --help flag is recognized.
     #[test]
     fn test_help_flag() {
-        let result = Args::try_parse_from(&["ghrr", "--help"]);
+        let result = Args::try_parse_from(["ghrr", "--help"]);
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.kind(), clap::error::ErrorKind::DisplayHelp);
@@ -163,7 +163,7 @@ mod tests {
     /// Verify that an unknown flag causes an error.
     #[test]
     fn test_unknown_flag() {
-        let result = Args::try_parse_from(&["ghrr", "--unknown", "value"]);
+        let result = Args::try_parse_from(["ghrr", "--unknown", "value"]);
         assert!(result.is_err());
     }
 
@@ -171,7 +171,7 @@ mod tests {
     /// a non-empty value after the flag).
     #[test]
     fn test_org_flag_without_value() {
-        let result = Args::try_parse_from(&["ghrr", "-o"]);
+        let result = Args::try_parse_from(["ghrr", "-o"]);
         assert!(result.is_err());
     }
 
@@ -179,7 +179,7 @@ mod tests {
     /// (clap accepts any string value including empty-looking ones).
     #[test]
     fn test_file_with_relative_path() {
-        let args = Args::parse_from(&[
+        let args = Args::parse_from([
             "ghrr", "-o", "org", "-r", "repo", "-f", "./relative/path.csv",
         ]);
         assert_eq!(args.file, Some("./relative/path.csv".to_string()));
