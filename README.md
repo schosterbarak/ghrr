@@ -6,7 +6,7 @@ Usecases are detailed at the following blog: https://www.battery.com/blog/fantas
 
 ## Prerequisites
 
-- [Rust toolchain](https://rustup.rs/) (Rust 1.56+ recommended)
+- [Rust toolchain](https://rustup.rs/) (Rust 1.85+ required — Edition 2024)
 - A GitHub personal access token — create one using the following guide:
   https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
 - Environment variables:

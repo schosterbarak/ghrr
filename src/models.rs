@@ -17,27 +17,26 @@ use serde::Serialize;
 ///   `User = namedtuple('User', ['email', 'location', 'username', 'company', 'followers', 'repos', 'organizations'])`
 ///
 /// The `Serialize` derive enables direct CSV serialization via the `csv` crate's serde
-/// integration. Fields are ordered to match the Python namedtuple field order.
+/// integration.
 ///
 /// # Field Mapping from Python
 ///
-/// | Python Field     | Rust Field      | Source in get_user_data()              |
-/// |------------------|-----------------|----------------------------------------|
-/// | `email`          | `email`         | `gh_user.email` (may be None → "")     |
-/// | `location`       | `location`      | `gh_user.location` (may be None → "")  |
-/// | `username`       | `username`      | `u.login`                              |
-/// | `company`        | `company`       | `gh_user.company` with '@' stripped     |
-/// | `followers`      | `followers`     | `gh_user.followers_count`              |
-/// | `repos`          | `repos`         | `gh_user.public_repos_count`           |
-/// | `organizations`  | `organizations` | Joined org login names (", " separator)|
+/// Fields are ordered to match the required CSV column header order per AAP §0.7.1:
+/// `username, company, organizations, email, location, followers_count, public_repos_count, user_interaction`
+/// (The `user_interaction` column is a per-stream property — stargazer, subscriber, or contributor —
+/// and is added during CSV writing in `csv_output.rs`, not stored on the User struct.)
+///
+/// | CSV Column           | Rust Field      | Serde Name             | Source in get_user_data()              |
+/// |----------------------|-----------------|------------------------|----------------------------------------|
+/// | `username`           | `username`      | `username`             | `u.login`                              |
+/// | `company`            | `company`       | `company`              | `gh_user.company` with '@' stripped     |
+/// | `organizations`      | `organizations` | `organizations`        | Joined org login names (", " separator)|
+/// | `email`              | `email`         | `email`                | `gh_user.email` (may be None → "")     |
+/// | `location`           | `location`      | `location`             | `gh_user.location` (may be None → "")  |
+/// | `followers_count`    | `followers`     | `followers_count`      | `gh_user.followers_count`              |
+/// | `public_repos_count` | `repos`         | `public_repos_count`   | `gh_user.public_repos_count`           |
 #[derive(Debug, Clone, Serialize)]
 pub struct User {
-    /// GitHub user's email address. Empty string if not publicly available.
-    pub email: String,
-
-    /// GitHub user's listed location. Empty string if not set.
-    pub location: String,
-
     /// GitHub username (login handle).
     pub username: String,
 
@@ -45,15 +44,25 @@ pub struct User {
     /// For example, "@Microsoft" becomes "Microsoft".
     pub company: String,
 
-    /// Number of followers the user has on GitHub. Always non-negative.
-    pub followers: u64,
-
-    /// Number of public repositories the user owns. Always non-negative.
-    pub repos: u64,
-
     /// Comma-separated list of organization names the user belongs to.
     /// For example, "org1, org2, org3". Empty string if user has no organizations.
     pub organizations: String,
+
+    /// GitHub user's email address. Empty string if not publicly available.
+    pub email: String,
+
+    /// GitHub user's listed location. Empty string if not set.
+    pub location: String,
+
+    /// Number of followers the user has on GitHub. Always non-negative.
+    /// Serialized as `followers_count` to match the required CSV column header.
+    #[serde(rename = "followers_count")]
+    pub followers: u64,
+
+    /// Number of public repositories the user owns. Always non-negative.
+    /// Serialized as `public_repos_count` to match the required CSV column header.
+    #[serde(rename = "public_repos_count")]
+    pub repos: u64,
 }
 
 impl User {
