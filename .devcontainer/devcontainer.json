@@ -1,21 +1,21 @@
 {
-	"name": "Python 3",
-	"image": "mcr.microsoft.com/devcontainers/python:3.10-bullseye",
+	"name": "Rust",
+	"image": "mcr.microsoft.com/devcontainers/rust:1-bullseye",
 	"features": {
-		"ghcr.io/devcontainers/features/node:1": {
-			"version": "none"
-		},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": ["rust-lang.rust-analyzer"]
+		}
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip3 install --user -r requirements.txt",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
+	// "postCreateCommand": "cargo build",
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
