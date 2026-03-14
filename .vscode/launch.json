@@ -5,14 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "name": "Debug GHRR",
+            "type": "lldb",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "preLaunchTask": "pipInstall",
-            
+            "program": "${workspaceFolder}/target/debug/ghrr",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "cargo build"
         }
     ]
 }

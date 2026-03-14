@@ -1,19 +1,22 @@
 {
     "version": "2.0.0",
     "tasks": [
-      {
-        "label": "pipInstall",
-        "type": "shell",
-        "osx": {
-          "command": "${config:python.pythonPath}/bin/python -m pip install -r requirements.txt"
+        {
+            "label": "cargo build",
+            "type": "shell",
+            "command": "cargo build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$rustc"]
         },
-        "windows": {
-          "command": "${config:python.pythonPath} -m pip install -r requirements.txt"
-        },
-        "linux": {
-          "command": "${config:python.pythonPath}/bin/python -m pip install -r requirements.txt"
-        },
-        "problemMatcher": [],
-      }
+        {
+            "label": "cargo test",
+            "type": "shell",
+            "command": "cargo test",
+            "group": "test",
+            "problemMatcher": ["$rustc"]
+        }
     ]
-  }
+}
